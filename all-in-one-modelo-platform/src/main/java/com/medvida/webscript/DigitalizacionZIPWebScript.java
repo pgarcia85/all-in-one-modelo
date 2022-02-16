@@ -47,7 +47,7 @@ public class DigitalizacionZIPWebScript extends DeclarativeWebScript {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DigitalizacionZIPWebScript.class);
 
-	//pruebas
+	
 	private ServiceRegistry serviceRegistry;
 	
 	private MimetypeService mimetypeService;
