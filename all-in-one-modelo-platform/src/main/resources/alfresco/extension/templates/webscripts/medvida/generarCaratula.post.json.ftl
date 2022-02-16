@@ -1,0 +1,3 @@
+{
+	"uuid nodo": "${uuid}"
+}

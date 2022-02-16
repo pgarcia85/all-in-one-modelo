@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model name="mvd:model" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+
+    <!-- Optional meta-data about the model -->
+    <description>Medvida Model</description>
+    <author>Paula</author>
+    <version>1.0</version>
+
+    <imports>
+        <!-- Import Alfresco Dictionary Definitions -->
+        <import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d"/>
+        <!-- Import Alfresco Content Domain Model Definitions -->
+        <import uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
+        <!-- Import Alfresco System Model Definitions -->
+        <import uri="http://www.alfresco.org/model/system/1.0" prefix="sys"/>
+    </imports>
+
+    <!-- Custom namespace for the ACME company -->
+    <namespaces>
+        <namespace uri="http://www.medvida.org/model/content/1.0" prefix="mvd"/>
+    </namespaces>
+
+    <constraints>
+        <constraint name="mvd:tipoFacturaList" type="LIST">
+            <parameter name="allowedValues">
+                <list>
+                    <value>Cliente</value>
+                    <value>Proveedor</value>
+                    <value>Otros</value>
+                </list>
+            </parameter>
+        </constraint>
+    </constraints>
+
+    <!-- ===============================================================================================================
+        Constraints, Types, and Aspects go here...
+        -->
+
+    <types>
+        <!--
+            ACME Enterprise-wide Document root type.
+            All other custom document types would extend this one.
+        -->
+        <type name="mvd:factura">
+            <title>Documento factura</title>
+            <description>Documento factura</description>
+            <parent>cm:content</parent>
+            <properties>
+            	<property name="mvd:idfactura">
+            	    <title>Identificador factura</title>
+                    <type>d:text</type>
+                </property>
+                <property name="mvd:tipo">
+                    <title>Tipo factura</title>
+                    <type>d:text</type>
+                    <constraints>
+                        <constraint ref="mvd:tipoFacturaList" />
+                    </constraints>
+                </property>
+                <property name="mvd:importe">
+                    <title>Importe</title>
+                    <type>d:float</type>
+                </property>
+            </properties>
+        </type>
+    </types>
+
+
+
+</model>

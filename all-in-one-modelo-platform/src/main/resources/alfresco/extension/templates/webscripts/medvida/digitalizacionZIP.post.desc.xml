@@ -1,0 +1,9 @@
+<webscript>
+    <shortname>DigitalizacionZIP</shortname>
+    <description>Recibe documentos digitalizados en formato zip</description>
+    <url>/medvida/contratos/DigitalizacionZIP</url>
+    <format default="json">extension</format>
+    <family>Medvida</family>
+    <authentication runas="admin">user</authentication>
+    <transaction>none</transaction>
+</webscript> 

@@ -1,0 +1,9 @@
+<webscript>
+    <shortname>Generar Caratula</shortname>
+    <description>Obtiene el contrato asociado al identificador que llega como parámetro, genera la portada en base a los datos que llegan en el JSON </description>
+    <url>/medvida/contratos/GenerarCaratula?id_contrato={id_contrato}</url>
+    <format default="json">extension</format>
+    <family>Medvida</family>
+    <authentication runas="admin">user</authentication>
+    <transaction>none</transaction>
+</webscript> 

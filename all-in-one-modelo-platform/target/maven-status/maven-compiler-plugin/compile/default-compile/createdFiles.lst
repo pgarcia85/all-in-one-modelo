@@ -1,0 +1,8 @@
+com\medvida\webscript\DigitalizacionZIPWebScript.class
+com\medvida\webscript\GenerarCaratulaWebScript.class
+com\medvida\platformsample\DemoComponent.class
+com\medvida\service\IReportsService.class
+com\medvida\model\MedvidaModel.class
+com\medvida\platformsample\Demo.class
+com\medvida\service\impl\IReportsServiceImpl.class
+com\medvida\platformsample\HelloWorldWebScript.class
