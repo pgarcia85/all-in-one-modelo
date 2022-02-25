@@ -45,7 +45,7 @@
 
 
 	<properties>
-
+		
 		<!-- Alfresco Maven Plugin version to use -->
 
 		<alfresco.sdk.version>4.3.0</alfresco.sdk.version>
@@ -58,9 +58,9 @@
 		<alfresco.platform.docker.user>alfresco</alfresco.platform.docker.user>
 		<alfresco.share.version>11.77</alfresco.share.version>
 		<alfresco.share.docker.version>7.1.0.1</alfresco.share.docker.version>
-		
+
 		<xdocreport.version>2.0.2</xdocreport.version>
-		
+
 		<!-- Docker images -->
 		<docker.acs.image>alfresco/alfresco-content-repository-community</docker.acs.image>
 		<docker.share.image>alfresco/alfresco-share</docker.share.image>
@@ -72,7 +72,7 @@
 			-Dmetadata-keystore.aliases=metadata
 			-Dmetadata-keystore.metadata.password=oKIWzVdEdA
 			-Dmetadata-keystore.metadata.algorithm=AES</keystore.settings>
-		<activemq.version>5.16.3</activemq.version>
+		
 		<!-- JRebel Hot reloading of classpath stuff and web resource stuff -->
 		<jrebel.version>1.1.8</jrebel.version>
 
@@ -114,7 +114,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-        	<scope>test</scope>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -140,59 +140,74 @@
 			<version>${alfresco.sdk.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- dependencia para generar el QR -->
 		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-all</artifactId>
-			<version>${activemq.version}</version>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>core</artifactId>
+			<version>3.2.1</version>
 		</dependency>
-
-        	<!-- dependencia para generar el QR -->
-          <dependency>
-            <groupId>com.google.zxing</groupId>
-            <artifactId>core</artifactId>
-            <version>3.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.zxing</groupId>
-            <artifactId>javase</artifactId>
-            <version>3.2.1</version>
-        </dependency>
-	<!-- dependencia para manejar pdf -->	
-         <dependency>
-    		<groupId>org.apache.pdfbox</groupId>
-    		<artifactId>pdfbox</artifactId>
-    		<version>2.0.25</version>
-        </dependency>
-        <dependency>
-    		<groupId>org.apache.pdfbox</groupId>
-    		<artifactId>pdfbox-tools</artifactId>
-    		<version>2.0.25</version>
-        </dependency>
-        <dependency>
-	      	<groupId>org.apache.pdfbox</groupId>
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>javase</artifactId>
+			<version>3.2.1</version>
+		</dependency>
+		<!-- dependencia para manejar pdf -->
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>2.0.25</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox-tools</artifactId>
+			<version>2.0.25</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox-examples</artifactId>
 			<version>2.0.25</version>
 		</dependency>
 		<!-- Thanks for using https://jar-download.com -->
-        
-        
-        <dependency>
+
+		<dependency>
+            <groupId>fr.opensagres.xdocreport</groupId>
+            <artifactId>fr.opensagres.xdocreport.core</artifactId>
+            <version>${xdocreport.version}</version>
+        </dependency>
+		<!-- Dependencia para poder leer documento de tipo Docx -->
+		<dependency>
+			<groupId>fr.opensagres.xdocreport</groupId>
+			<artifactId>fr.opensagres.xdocreport.document</artifactId>
+			<version>${xdocreport.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.opensagres.xdocreport</groupId>
+			<artifactId>fr.opensagres.xdocreport.document.docx</artifactId>
+			<version>${xdocreport.version}</version>
+		</dependency>
+		<!-- Dependencia necesaria para convertir los ficheros Docx a PDF -->
+		<dependency>
+            <groupId>fr.opensagres.xdocreport</groupId>
+            <artifactId>fr.opensagres.xdocreport.converter</artifactId>
+            <version>${xdocreport.version}</version>
+        </dependency>
+		<dependency>
+			<groupId>fr.opensagres.xdocreport</groupId>
+			<artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
+			<version>${xdocreport.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>fr.opensagres.xdocreport</groupId>
 			<artifactId>fr.opensagres.xdocreport.template.velocity</artifactId>
 			<version>${xdocreport.version}</version>
 		</dependency>
-        <!-- Dependencia para poder leer documento de tipo Docx -->
-        <dependency>
+		<dependency>
             <groupId>fr.opensagres.xdocreport</groupId>
-            <artifactId>fr.opensagres.xdocreport.document.docx</artifactId>
+            <artifactId>fr.opensagres.xdocreport.template.freemarker</artifactId>
             <version>${xdocreport.version}</version>
         </dependency>
-        <!-- Dependencia necesaria para convertir los ficheros Docx a PDF -->
-        <dependency>
-            <groupId>fr.opensagres.xdocreport</groupId>
-            <artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
-            <version>${xdocreport.version}</version>
-        </dependency>
+		
 	</dependencies>
 
 
@@ -436,31 +451,31 @@
 
 
 
-	<plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-assembly-plugin</artifactId>
-	<version>2.6</version>
-	<executions>
-		<execution>
-			<id>build-amp-file</id>
-			<phase>package</phase>
-			<goals>
-				<goal>single</goal>
-			</goals>
-			<configuration>
-				<appendAssemblyId>false</appendAssemblyId>
-				<descriptor>src/main/assembly/amp.xml</descriptor>
-			</configuration>
-		</execution>
-	</executions>
-	<dependencies>
-		<dependency>
-			<groupId>org.alfresco.maven.plugin</groupId>
-			<artifactId>alfresco-maven-plugin</artifactId>
-			<version>${alfresco.sdk.version}</version>
-		</dependency>
-	</dependencies>
-</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.6</version>
+					<executions>
+						<execution>
+							<id>build-amp-file</id>
+							<phase>package</phase>
+							<goals>
+								<goal>single</goal>
+							</goals>
+							<configuration>
+								<appendAssemblyId>false</appendAssemblyId>
+								<descriptor>src/main/assembly/amp.xml</descriptor>
+							</configuration>
+						</execution>
+					</executions>
+					<dependencies>
+						<dependency>
+							<groupId>org.alfresco.maven.plugin</groupId>
+							<artifactId>alfresco-maven-plugin</artifactId>
+							<version>${alfresco.sdk.version}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
 
 
 
