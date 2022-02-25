@@ -23,6 +23,7 @@ import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchService;
 import org.apache.pdfbox.examples.util.PDFMergerExample;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,28 +53,26 @@ public class GenerarCaratulaWebScript extends DeclarativeWebScript{
 	
 	private transient IReportsService reportsService;
 	
-	private final static String idPlantilla= "90bbd3fc-93be-47ba-abdf-65c82e5ef766";
+	
 	
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
+		long identificador=System.currentTimeMillis();
 		//hay unejemplo de crear plantilla en artica GenerateDocumentFromTemplate
 		Map<String, Object> model = new HashMap<String, Object>();
 		
 		String idContrato = req.getParameter("id_contrato");
 		//obtener el json que se envia con los datos de la caratula//
-		JSONObject map = (JSONObject) req.parseContent();
-		String nombre = map.getString("nombre");
-		String apellidos = map.getString("apellidos");
-		String id_factura=map.getString("numero");
+		JSONObject map = (JSONObject) req.parseContent();	
+		String idPlantilla=map.getString("id_plantilla");
 		
 		String uuid= null;
 		
-		//buscar el documento por su id
-		StoreRef storeRef = new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore");
-		
+		//buscar el documento al que se añade la caratura por su id de contrato
+		StoreRef storeRef = new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore");		
 		ResultSet rs = serviceRegistry.getSearchService().query(storeRef, SearchService.LANGUAGE_FTS_ALFRESCO,
 				"TYPE:\"mvd:factura\" AND =mvd:idfactura:\""+idContrato+"\"");
-		int tamanio = rs.length();
+		rs.length();
 		NodeRef nodoContratoAniadirCaratula = null;
 
 		try {
@@ -83,21 +82,9 @@ public class GenerarCaratulaWebScript extends DeclarativeWebScript{
 			//Obtener el NodeRef del documento que debe llevar la caratula
 			nodoContratoAniadirCaratula = rs.getNodeRef(0);
 			
-			//Generar el noderef de la plantilla el idenfificador de la plantilla podrian pasarlo como parametro
-			//como solo tenemos una plantilla se guarda como contante
+			//Generar el noderef de la plantilla el idenfificador de la plantilla 
 			NodeRef nodoPlantilla = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, idPlantilla);
-			//Generar un map con los valores de la plantilla
-			Map<String, Object> templateProperties = new HashMap<String, Object>();
-			templateProperties.put("d_idFactura", id_factura);
-			templateProperties.put("PE1NOM", nombre);
-			templateProperties.put("PE1AP", apellidos);
-			
-			//crear el codigo qr que insertaremos en la plantilla
-			BufferedImage qr= crearQR("Hola Paula soy una prueba que genera un codigo QR", 300, 300);
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			ImageIO.write(qr, "png", os);
-			IImageProvider selloQR = new ByteArrayImageProvider(os.toByteArray(), true);
-			templateProperties.put("sello", selloQR);
+			Map<String, Object> templateProperties = generarMapaPlantilla(map);
 			//Con reportService obtemos un stream con el contenido del documento creado a partir de la plantilla
 			// como queremos que nos genere pdf ponemos true
 			InputStream contenidoDocumento = reportsService.generateReport(nodoPlantilla, templateProperties, true);
@@ -109,11 +96,11 @@ public class GenerarCaratulaWebScript extends DeclarativeWebScript{
 			NodeRef nodoCarpeta = rs2.getNodeRef(0);
 			
 			//Guardar el documento en el repo. Le pasamos la carpeta donde se va a guardar el documento, su contenido y si es o no un pdf
-			NodeRef archivoGeneradoConPlantilla = generarDocumentoDePlantilla(contenidoDocumento, nodoCarpeta, true);
-			uuid=archivoGeneradoConPlantilla.getId();
+			NodeRef caratulaDocumento = generarDocumentoDePlantilla(contenidoDocumento, nodoCarpeta, true, identificador);
+			uuid=caratulaDocumento.getId();
 			
 			//Ahora se trata de unir el archivoGeneradoConPlantilla y nodoContratoAniadirCaratula
-			ContentReader readerArchivoGeneradoConPlantilla = serviceRegistry.getFileFolderService().getReader(archivoGeneradoConPlantilla);			
+			ContentReader readerArchivoGeneradoConPlantilla = serviceRegistry.getFileFolderService().getReader(caratulaDocumento);			
 			InputStream archivoGeneradoConPlantillaStream= readerArchivoGeneradoConPlantilla.getContentInputStream();
 			
 			ContentReader readernodoContratoAniadirCaratula = serviceRegistry.getFileFolderService().getReader(nodoContratoAniadirCaratula);			
@@ -125,7 +112,7 @@ public class GenerarCaratulaWebScript extends DeclarativeWebScript{
 			PDFMergerExample pdfMergerExample = new PDFMergerExample();
 		    InputStream pdfMergeado = pdfMergerExample.merge(pdfs);
 		    //nodo para el nuevo archivo 
-		    FileInfo mergeado = serviceRegistry.getFileFolderService().create(nodoCarpeta, "merge.pdf",
+		    FileInfo mergeado = serviceRegistry.getFileFolderService().create(nodoCarpeta, "merge-"+identificador+".pdf",
 					ContentModel.TYPE_CONTENT);
 
 		    final ContentWriter writer = serviceRegistry.getFileFolderService().getWriter(mergeado.getNodeRef());
@@ -145,9 +132,50 @@ public class GenerarCaratulaWebScript extends DeclarativeWebScript{
 		
 	}
 
-	private NodeRef generarDocumentoDePlantilla(InputStream contenidoDocumento, NodeRef nodoCarpeta, boolean pdf) {
+	private Map<String, Object> generarMapaPlantilla(JSONObject map)
+			throws JSONException, Exception {
+		//Generar un map con los valores de la plantilla
+		Map<String, Object> templateProperties = new HashMap<String, Object>();
+		templateProperties.put("usuario", map.get("usuario"));
+		templateProperties.put("oficina", map.get("oficina"));
+		templateProperties.put("fechaOperacion", map.get("fechaOperacion"));
+		JSONObject cliente = (JSONObject) map.get("cliente");
+		templateProperties.put("dni", cliente.get("dni"));
+		templateProperties.put("nombre", cliente.get("nombre"));
+		templateProperties.put("apellido1", cliente.get("apellido1"));
+		templateProperties.put("apellido2", cliente.get("apellido2"));
+		templateProperties.put("tipoDocumento", map.get("tipoDocumento"));
+		templateProperties.put("descripcion", map.get("descripcion"));
+		templateProperties.put("dSalud", map.get("declaracionSalud"));
+		templateProperties.put("comPermanencia", map.get("compromisoPermanencia"));
+		templateProperties.put("condEspeciales", map.get("condicionesEspeciales"));
+		templateProperties.put("condGenerales", map.get("condicionesGenerales"));
+		templateProperties.put("mandato", map.get("mandato"));
+		templateProperties.put("codigoBdi", map.get("codigoBdi"));
+		
+		
+		//crear el codigo qr que insertaremos en la plantilla
+		BufferedImage qr= crearQR(map.get("codigoBdi").toString(), 200, 200);
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		ImageIO.write(qr, "png", os);
+		IImageProvider selloQR = new ByteArrayImageProvider(os.toByteArray(), true);
+		templateProperties.put("sello", selloQR);
+		
+		//Esto era para insertar el codigo bdi lateral como imagen pero al final lo insertamos como texto en la plantilla
+		/*
+		 * BufferedImage imageBdi= rotateImage(createImage(map.get("codigoBdi").toString()));
+		ByteArrayOutputStream os2 = new ByteArrayOutputStream();
+		ImageIO.write(imageBdi, "png", os2);
+		IImageProvider bdi = new ByteArrayImageProvider(os2.toByteArray(), true);
+		templateProperties.put("bdi", bdi);*/
+		
+		return templateProperties;
+	}
+	
+
+	private NodeRef generarDocumentoDePlantilla(InputStream contenidoDocumento, NodeRef nodoCarpeta, boolean pdf, long identificador) {
 		FileInfo archivoGeneradoConPlantilla=null;
-		String nombreArchivo = "pruebas_plantilla"+System.currentTimeMillis();
+		String nombreArchivo = "pruebas_plantilla-"+identificador;
 		if(pdf) {
 			nombreArchivo=nombreArchivo+".pdf";
 			// Crea un archivo bajo la carpeta indicada arriba y esta vacio al inicio			
@@ -172,13 +200,7 @@ public class GenerarCaratulaWebScript extends DeclarativeWebScript{
 					new HashMap<>());
 			
 		}
-		
 
-		
-		
-
-	
-		
 		return archivoGeneradoConPlantilla.getNodeRef();
 	}
 

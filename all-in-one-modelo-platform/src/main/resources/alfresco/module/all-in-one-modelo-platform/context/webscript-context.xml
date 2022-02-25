@@ -71,4 +71,24 @@
           <ref bean="ContentService" />
       </property>
 	</bean>
+	
+	
+	<bean id="webscript.medvida.subirDocumento.post"
+		class="com.medvida.webscript.SubirDocumentoWebScript" 
+		parent="webscript">	
+		
+		<property name="serviceRegistry">
+          <ref bean="ServiceRegistry" />
+        </property>
+        
+        <property name="searchService">
+          <ref bean="SearchService" />
+        </property>
+
+	</bean>
+	
+	<bean id="UtilsServiceImpl"
+		class="com.medvida.service.impl.UtilsServiceImpl">
+		
+	</bean>
 </beans>

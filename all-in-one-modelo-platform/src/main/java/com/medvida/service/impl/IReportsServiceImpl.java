@@ -14,10 +14,13 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import com.medvida.service.IReportsService;
 
+import fr.opensagres.xdocreport.converter.ConverterRegistry;
 import fr.opensagres.xdocreport.converter.ConverterTypeTo;
 import fr.opensagres.xdocreport.converter.ConverterTypeVia;
+import fr.opensagres.xdocreport.converter.IConverter;
 import fr.opensagres.xdocreport.converter.Options;
 import fr.opensagres.xdocreport.core.XDocReportException;
+import fr.opensagres.xdocreport.core.document.DocumentKind;
 import fr.opensagres.xdocreport.document.IXDocReport;
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.template.IContext;
@@ -49,6 +52,10 @@ public class IReportsServiceImpl implements IReportsService{
 		
 		FieldsMetadata metadata = new FieldsMetadata();
 		metadata.addFieldAsImage("sello");
+		/*
+		 * Esto era para insertar el codigo bdi como imagen, pero al final lo insertamos como texto
+		metadata.addFieldAsImage("bdi");
+		*/
 		report.setFieldsMetadata(metadata);
 		
 		IContext context = report.createContext();
@@ -60,6 +67,8 @@ public class IReportsServiceImpl implements IReportsService{
 		if(pdf) {
 			//para pdf
 			Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.XWPF);
+			//Options options = Options.getFrom(DocumentKind.DOCX).to(ConverterTypeTo.PDF).via(ConverterTypeVia.XWPF);
+			
 			report.convert(context, options, out);
 		}else {
 			//para docx

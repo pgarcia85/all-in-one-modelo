@@ -1,0 +1,9 @@
+<webscript>
+    <shortname>Subir Documento</shortname>
+    <description>Guarda un documento colocandolo en la carpeta correspondiente</description>
+    <url>/medvida/contratos/subirDocumento</url>
+    <format default="json">extension</format>
+    <family>Medvida</family>
+    <authentication runas="admin">user</authentication>
+    <transaction>none</transaction>
+</webscript> 
