@@ -14,6 +14,7 @@
     </parent>
 
     <properties>
+    	<activemq.version>5.16.3</activemq.version>
     </properties>
 
     <dependencies>
@@ -30,6 +31,11 @@
             <scope>test</scope>
             <classifier>tests</classifier>
         </dependency>
+        <dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-all</artifactId>
+			<version>${activemq.version}</version>		
+		</dependency>
         <!-- Add any additional AMPs or extension JARs here that you want to be deployed in Alfresco -->
         <!-- IMPORTANT: 
              If using amp extensions only, add <includeTypes>amp</includeTypes> to the "collect-extensions" execution below.
@@ -42,6 +48,7 @@
                 </exclusions>
              to each amp dependency definition.
          -->
+         
     </dependencies>
 
     <build>
